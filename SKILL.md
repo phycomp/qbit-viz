@@ -176,7 +176,7 @@ When building Streamlit-based quantum visualization demos, apply these rules:
 
 | Tool | Location | Startup | Description |
 |------|----------|---------|-------------|
-| qbit-gate-viz | `~/薦家/布球/qbit-gate-viz/app.py` | `streamlit run app.py` | 1/2/3 qubit logic gate demo (Qiskit + Aer), mutual-exclusive control/target; its matplotlib-3D Bloch panel is legacy |
+| qbit-gate-viz | `~/薦家/布球/qbit-gate-viz/app.py` | `streamlit run app.py` | 1/2/3 qubit logic gate demo (Qiskit + Aer), mutual-exclusive control/target, 2D Bloch projection |
 | bloch-evolution-viz | `~/薦家/布球/bloch-evolution-viz/app.py` | `panel serve app.py --show` | 3D Bloch sphere + qubit evolution (PyVista + Panel), Rx/Ry/Rz trail, state vector, θ/φ readout |
 
 > `quant-dboard` is a **quant finance** dashboard (equity / drawdown / Kelly), NOT a Qiskit demo. Do not list it here.
@@ -194,4 +194,4 @@ When building Streamlit-based quantum visualization demos, apply these rules:
 - PyVista: https://docs.pyvista.org/
 - Distilled notes: `~/薦家/布球/` (Bloch sphere derivations, API references)
 - viz-dboard: Streamlit rules and demo tool conventions
-- Logic check: 2026-11-22 (rev-skill) — removed stray `EOF`; added Fredkin, mutual-exclusion pointer, `horizontal=True`. Second pass: **removed the incorrect matplotlib-3D exception** (it contradicted `viz-dboard`); 3D is now unconditionally PyVista + Panel, backed by the working `5布球態演化維問.py` implementation. Third pass: 2D narrowed to matplotlib only (no seaborn/PIL).
+- Logic check: 2026-11-22 (rev-skill) — removed stray `EOF`; added Fredkin, mutual-exclusion pointer, `horizontal=True`. Second pass: **removed the incorrect matplotlib-3D exception** (it contradicted `viz-dboard`); 3D is now unconditionally PyVista + Panel, backed by the working `5布球態演化維問.py` implementation. Third pass: 2D narrowed to matplotlib only (no seaborn/PIL). Fourth pass: `qbit-gate-viz` Bloch panel converted from matplotlib 3D to 2D projection — no matplotlib-3D demo remains.

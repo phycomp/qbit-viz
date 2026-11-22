@@ -77,15 +77,30 @@ plot_state_qsphere(sv)       # Global phase + entanglement
 plot_state_city(sv)         # Density matrix as city
 ```
 
-### PyVista 3D Rendering
+### PyVista 3D Rendering (proven implementation)
+Proven in `5布球態演化維問.py`: off-screen `Plotter`, sphere `opacity=0.15`,
+state vector as `PolyData` line + moving tip sphere, per-frame `screenshot()` streamed to UI.
+
 ```python
+import os
+os.environ["PYVISTA_OFF_SCREEN"] = "True"   # BEFORE importing pyvista
 import pyvista as pv
-plotter = pv.Plotter()
-sphere = pv.Sphere(radius=1.0)
-plotter.add_mesh(sphere, opacity=0.3, color='lightblue')
-plotter.add_points([x, y, z], color='red', point_size=10)
-plotter.show()
+
+plotter = pv.Plotter(off_screen=True, window_size=(480, 480))
+plotter.add_mesh(pv.Sphere(radius=1.0, theta_resolution=32, phi_resolution=24),
+                 color="gray", opacity=0.15, show_edges=True)
+line = pv.PolyData([[0, 0, 0], [1, 0, 0]])
+line.lines = [2, 0, 1]
+plotter.add_mesh(line, color="#00ffff", line_width=4)
+tip = pv.Sphere(radius=0.06, center=(1, 0, 0))
+plotter.add_mesh(tip, color="#ffcc00")
+# per frame: line.points[1] = [bx,by,bz]; tip.center = [bx,by,bz];
+#           plotter.render(); frame = plotter.screenshot()
+plotter.close()
 ```
+
+Panel integration: `pn.extension("vtk")` then `pn.pane.VTK(plotter.ren_win, width=650, height=650)`
+(the pane takes the **render window**, not the Plotter). Close the previous Plotter before rebuilding.
 
 ### Aer Simulator
 ```python
@@ -155,13 +170,14 @@ When building Streamlit-based quantum visualization demos, apply these rules:
 - **Layout**: Use `st.columns([3, 7])` for left-right layout
 - **Container width**: `use_container_width=True` → `width='stretch'`. `False` → `width='content'`
 - **Context manager**: Use `with` identifier, not `expand`
-- **Charting library**: 2D → `matplotlib`. 3D → `pyvista` + `panel` for general scenes; **Bloch spheres use matplotlib 3D with `plt.close(fig)`** (see `qbit-gate`)
+- **Charting library**: 2D → `matplotlib`. **3D → `pyvista` + `panel` unconditionally, including Bloch spheres** — there is no matplotlib-3D exception. See `bloch-evolution-viz` and `5布球態演化維問.py`.
 
 ## Demo Tools
 
 | Tool | Location | Startup | Description |
 |------|----------|---------|-------------|
-| qbit-gate-viz | `~/薦家/布球/qbit-gate-viz/app.py` | `streamlit run app.py` | 1/2/3 qubit logic gate demo (Qiskit + Aer), mutual-exclusive control/target, Bloch spheres |
+| qbit-gate-viz | `~/薦家/布球/qbit-gate-viz/app.py` | `streamlit run app.py` | 1/2/3 qubit logic gate demo (Qiskit + Aer), mutual-exclusive control/target; its matplotlib-3D Bloch panel is legacy |
+| bloch-evolution-viz | `~/薦家/布球/bloch-evolution-viz/app.py` | `panel serve app.py --show` | 3D Bloch sphere + qubit evolution (PyVista + Panel), Rx/Ry/Rz trail, state vector, θ/φ readout |
 
 > `quant-dboard` is a **quant finance** dashboard (equity / drawdown / Kelly), NOT a Qiskit demo. Do not list it here.
 
@@ -178,4 +194,4 @@ When building Streamlit-based quantum visualization demos, apply these rules:
 - PyVista: https://docs.pyvista.org/
 - Distilled notes: `~/薦家/布球/` (Bloch sphere derivations, API references)
 - viz-dboard: Streamlit rules and demo tool conventions
-- Logic check: 2026-11-22 — removed stray `EOF`; added Fredkin, mutual-exclusion pointer to `qbit-gate`, `horizontal=True` in demo snippet, and Bloch-sphere 3D exception.
+- Logic check: 2026-11-22 (rev-skill) — removed stray `EOF`; added Fredkin, mutual-exclusion pointer, `horizontal=True`. Second pass: **removed the incorrect matplotlib-3D exception** (it contradicted `viz-dboard`); 3D is now unconditionally PyVista + Panel, backed by the working `5布球態演化維問.py` implementation.

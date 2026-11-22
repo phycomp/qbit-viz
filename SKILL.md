@@ -170,15 +170,15 @@ When building Streamlit-based quantum visualization demos, apply these rules:
 - **Container width**: `use_container_width=True` → `width='stretch'`. `False` → `width='content'`
 - **Context manager**: Use `with` identifier, not `expand`
 - **Charting library**: 2D → **`matplotlib` only** (no `seaborn`, no `PIL`, no `plotly`). 3D → **`pyvista` + `panel`** unconditionally, including Bloch spheres — no matplotlib-3D exception. See the integrated 3D section of `qbit-gate-viz/app.py` and `5布球態演化維問.py`.
-- **Implementation prerequisite (owned by `viz-dboard`)**: before writing or changing any demo `app.py`, read `~/荐家/布球/INDEX.md` + the matching `*_distilled.md` from `file-distill` **before** raw `.py` scripts or sibling demos. Do not duplicate the rule here — follow `viz-dboard` → Demo Implementation Prerequisite — Distilled-First.
+- **Implementation prerequisite (owned by `viz-dboard`)**: before writing or changing any demo `app.py`, read `~/薦家/布球/INDEX.md` + the matching `*_distilled.md` from `file-distill` **before** raw `.py` scripts or sibling demos. Do not duplicate the rule here — follow `viz-dboard` → Demo Implementation Prerequisite — Distilled-First.
 
 ## Demo Tools
 
 | Tool | Location | Startup | Description |
 |------|----------|---------|-------------|
-| qbit-gate-viz | `~/荐家/布球/qbit-gate-viz/app.py` | `streamlit run app.py` | **One integrated app**: Qiskit + Aer 1/2/3 qubit gates, mutual-exclusive control/target, 2D Bloch projection (matplotlib), **plus 3D Bloch evolution** (Rx/Ry/Rz, trail, α/β + θ/φ readout) via PyVista → Panel VTK pane → `st.iframe` |
+| qbit-gate-viz | `~/薦家/布球/qbit-gate-viz/app.py` | `streamlit run app.py` | **One integrated app**: Qiskit + Aer 1/2/3 qubit gates, mutual-exclusive control/target, 2D Bloch projection (matplotlib), **plus 3D Bloch evolution** (Rx/Ry/Rz, trail, α/β + θ/φ readout) via PyVista → Panel VTK pane → `st.iframe` |
 
-> `~/荐家/布球/bloch-evolution-viz/app.py` is a **retired standalone demo** — its logic was folded into `qbit-gate-viz/app.py`. Do not list or copy it.
+> `~/薦家/布球/bloch-evolution-viz/app.py` is a **retired standalone demo** — its logic was folded into `qbit-gate-viz/app.py`. Do not list or copy it.
 > `quant-dboard` is a **quant finance** dashboard (equity / drawdown / Kelly), NOT a Qiskit demo. Do not list it here.
 
 ## Guardrails
@@ -194,4 +194,5 @@ When building Streamlit-based quantum visualization demos, apply these rules:
 - PyVista: https://docs.pyvista.org/
 - Distilled notes: `~/薦家/布球/` (Bloch sphere derivations, API references)
 - viz-dboard: Streamlit rules and demo tool conventions
+- Path invariant: use only `~/薦家/布球/` (繁體 薦). `~/荐家/` must never be created; never use a simplified-path `cd` fallback. Source: a real incident where a `write` created `~/荐家/...` and subsequent `cd` silently picked the empty tree, producing empty repos.
 - Logic check: 2026-11-22 (rev-skill) — removed stray `EOF`; added Fredkin, mutual-exclusion pointer, `horizontal=True`. Second pass: **removed the incorrect matplotlib-3D exception** (it contradicted `viz-dboard`); 3D is now unconditionally PyVista + Panel, backed by the working `5布球態演化維問.py` implementation. Third pass: 2D narrowed to matplotlib only (no seaborn/PIL). Fourth pass: `qbit-gate-viz` Bloch panel converted from matplotlib 3D to 2D projection — no matplotlib-3D demo remains. Fifth pass (doc layer): removed matplotlib-backed Qiskit renderer examples (`plot_bloch_multivector` / `plot_state_qsphere` / `plot_state_city`); both demo code layers now comply (step 9 hook). Sixth pass (2026-11-22, review + implementation): `description` now starts with `Use when...`; added **Core Invariant**; `bloch-evolution-viz` rewritten to compute states with Qiskit `Statevector` and draw with PyVista + Panel, fixed the evolution off-by-one (previous code applied U^(frames+1)), added `Player` animation and α/β readout; `qbit-gate-viz/__init__.py` synced byte-for-byte with `app.py`, legacy `app.py.bak` (matplotlib-3D) removed, `__pycache__` purged. Seventh pass (user rule via `rev-skill`): 3D evolution folded **into the single `qbit-gate-viz/app.py`** (PyVista → Panel VTK pane → `st.iframe`); Core Invariant, all render references, Guardrails and Demo Tools updated to one integrated app; `bloch-evolution-viz` marked retired; added a pointer to `viz-dboard`'s distilled-first prerequisite instead of duplicating the rule.

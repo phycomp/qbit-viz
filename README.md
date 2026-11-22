@@ -29,4 +29,3 @@ Trigger phrases: "quantum gate", "Bloch sphere", "qubit visualization", "Qiskit"
 ## License
 
 MIT
-EOF

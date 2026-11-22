@@ -170,7 +170,7 @@ When building Streamlit-based quantum visualization demos, apply these rules:
 - **Layout**: Use `st.columns([3, 7])` for left-right layout
 - **Container width**: `use_container_width=True` → `width='stretch'`. `False` → `width='content'`
 - **Context manager**: Use `with` identifier, not `expand`
-- **Charting library**: 2D → `matplotlib`. **3D → `pyvista` + `panel` unconditionally, including Bloch spheres** — there is no matplotlib-3D exception. See `bloch-evolution-viz` and `5布球態演化維問.py`.
+- **Charting library**: 2D → **`matplotlib` only** (no `seaborn`, no `PIL`, no `plotly`). 3D → **`pyvista` + `panel`** unconditionally, including Bloch spheres — no matplotlib-3D exception. See `bloch-evolution-viz` and `5布球態演化維問.py`.
 
 ## Demo Tools
 
@@ -194,4 +194,4 @@ When building Streamlit-based quantum visualization demos, apply these rules:
 - PyVista: https://docs.pyvista.org/
 - Distilled notes: `~/薦家/布球/` (Bloch sphere derivations, API references)
 - viz-dboard: Streamlit rules and demo tool conventions
-- Logic check: 2026-11-22 (rev-skill) — removed stray `EOF`; added Fredkin, mutual-exclusion pointer, `horizontal=True`. Second pass: **removed the incorrect matplotlib-3D exception** (it contradicted `viz-dboard`); 3D is now unconditionally PyVista + Panel, backed by the working `5布球態演化維問.py` implementation.
+- Logic check: 2026-11-22 (rev-skill) — removed stray `EOF`; added Fredkin, mutual-exclusion pointer, `horizontal=True`. Second pass: **removed the incorrect matplotlib-3D exception** (it contradicted `viz-dboard`); 3D is now unconditionally PyVista + Panel, backed by the working `5布球態演化維問.py` implementation. Third pass: 2D narrowed to matplotlib only (no seaborn/PIL), and `布球_distilled.md` source labels corrected.

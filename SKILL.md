@@ -1,11 +1,15 @@
 ---
 name: qbit-viz
-description: Quantum bit visualization skill — 2/3 qubit logic gates, Bloch sphere rendering, state evolution, and interactive demos using Qiskit + Aer. Use when the user asks about quantum gates, Bloch sphere, qubit visualization, quantum circuit rendering, or Qiskit/Aer simulation. Triggers on "quantum gate", "Bloch sphere", "qubit visualization", "Qiskit", "Aer simulator", "quantum circuit".
+description: Use when the user asks about quantum gates, Bloch sphere visualization, qubit state evolution, or Qiskit/Aer simulation. Triggers on "quantum gate", "Bloch sphere", "qubit visualization", "state evolution", "Qiskit", "Aer simulator", "quantum circuit", "布球", "量子態演化".
 ---
 
 # Quantum Bit Visualization (Qiskit + Aer)
 
 2/3 qubit logic gates, Bloch sphere rendering, state evolution, and interactive demos using Qiskit + Aer.
+
+## Core Invariant
+
+**Every visual element must be derived from an actual quantum state computed by Qiskit (or an Aer measurement result) — never illustrative art.** All later rules follow from this: Qiskit/Aer owns the math, `matplotlib` owns 2D charts, `pyvista` + `panel` own 3D (including Bloch spheres), and the two demos stay split — `qbit-gate-viz` (2D, Streamlit) and `bloch-evolution-viz` (3D, Panel).
 
 ## When to Use
 
@@ -172,7 +176,7 @@ When building Streamlit-based quantum visualization demos, apply these rules:
 | Tool | Location | Startup | Description |
 |------|----------|---------|-------------|
 | qbit-gate-viz | `~/薦家/布球/qbit-gate-viz/app.py` | `streamlit run app.py` | 1/2/3 qubit logic gate demo (Qiskit + Aer), mutual-exclusive control/target, 2D Bloch projection |
-| bloch-evolution-viz | `~/薦家/布球/bloch-evolution-viz/app.py` | `panel serve app.py --show` | 3D Bloch sphere + qubit evolution (PyVista + Panel), Rx/Ry/Rz trail, state vector, θ/φ readout |
+| bloch-evolution-viz | `~/薦家/布球/bloch-evolution-viz/app.py` | `panel serve app.py --show` | 3D Bloch sphere + qubit evolution (Qiskit state math, PyVista + Panel 3D), Rx/Ry/Rz trail, Player animation, α/β + θ/φ readout |
 
 > `quant-dboard` is a **quant finance** dashboard (equity / drawdown / Kelly), NOT a Qiskit demo. Do not list it here.
 
@@ -189,4 +193,4 @@ When building Streamlit-based quantum visualization demos, apply these rules:
 - PyVista: https://docs.pyvista.org/
 - Distilled notes: `~/薦家/布球/` (Bloch sphere derivations, API references)
 - viz-dboard: Streamlit rules and demo tool conventions
-- Logic check: 2026-11-22 (rev-skill) — removed stray `EOF`; added Fredkin, mutual-exclusion pointer, `horizontal=True`. Second pass: **removed the incorrect matplotlib-3D exception** (it contradicted `viz-dboard`); 3D is now unconditionally PyVista + Panel, backed by the working `5布球態演化維問.py` implementation. Third pass: 2D narrowed to matplotlib only (no seaborn/PIL). Fourth pass: `qbit-gate-viz` Bloch panel converted from matplotlib 3D to 2D projection — no matplotlib-3D demo remains. Fifth pass (doc layer): removed matplotlib-backed Qiskit renderer examples (`plot_bloch_multivector` / `plot_state_qsphere` / `plot_state_city`); both demo code layers now comply (step 9 hook).
+- Logic check: 2026-11-22 (rev-skill) — removed stray `EOF`; added Fredkin, mutual-exclusion pointer, `horizontal=True`. Second pass: **removed the incorrect matplotlib-3D exception** (it contradicted `viz-dboard`); 3D is now unconditionally PyVista + Panel, backed by the working `5布球態演化維問.py` implementation. Third pass: 2D narrowed to matplotlib only (no seaborn/PIL). Fourth pass: `qbit-gate-viz` Bloch panel converted from matplotlib 3D to 2D projection — no matplotlib-3D demo remains. Fifth pass (doc layer): removed matplotlib-backed Qiskit renderer examples (`plot_bloch_multivector` / `plot_state_qsphere` / `plot_state_city`); both demo code layers now comply (step 9 hook). Sixth pass (2026-11-22, review + implementation): `description` now starts with `Use when...`; added **Core Invariant**; `bloch-evolution-viz` rewritten to compute states with Qiskit `Statevector` and draw with PyVista + Panel, fixed the evolution off-by-one (previous code applied U^(frames+1)), added `Player` animation and α/β readout; `qbit-gate-viz/__init__.py` synced byte-for-byte with `app.py`, legacy `app.py.bak` (matplotlib-3D) removed, `__pycache__` purged.

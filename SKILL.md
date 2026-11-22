@@ -57,7 +57,12 @@ When qubits are entangled, individual Bloch vectors shrink or vanish. This is vi
 | CNOT | Flips target if control is 1 | `qc.cx(c, t)` |
 | CZ | Phase flip if both are 1 | `qc.cz(c, t)` |
 | SWAP | Swaps two qubits | `qc.swap(a, b)` |
-| Toffoli | Flips target if both controls are 1 | `qc.ccx(c1, c2, t)` |
+| Toffoli (CCNOT) | Flips target if both controls are 1 | `qc.ccx(c1, c2, t)` |
+| Fredkin (CSWAP) | Swaps two targets if control is 1 | `qc.cswap(c, t1, t2)` |
+
+> **Selector rule:** never let control/target share a bit index (`CircuitError: duplicate bit arguments`).
+> `qbit-viz` owns rendering; follow **`qbit-gate`** for dynamic gate families and mutual-exclusive
+> control/target selectors (option filtering at selection time, not post-hoc `st.info` fixes).
 
 ## Visualization Methods
 
@@ -104,8 +109,9 @@ from qiskit.visualization import plot_bloch_multivector
 import matplotlib.pyplot as plt
 
 st.set_page_config(page_title="Qubit Lab", layout="wide")
-num_qubits = st.sidebar.radio("Qubits", [1, 2, 3])
-# Gate selection, circuit execution, Bloch sphere display
+num_qubits = st.sidebar.radio("Qubits", [1, 2, 3], horizontal=True)
+# Gate selection / mutual exclusion: see qbit-gate (option filtering, not st.info)
+# Circuit execution, Bloch sphere display
 ```
 
 ## Code Templates
@@ -149,7 +155,7 @@ When building Streamlit-based quantum visualization demos, apply these rules:
 - **Layout**: Use `st.columns([3, 7])` for left-right layout
 - **Container width**: `use_container_width=True` → `width='stretch'`. `False` → `width='content'`
 - **Context manager**: Use `with` identifier, not `expand`
-- **Charting library**: 2D → `matplotlib`. 3D → `pyvista` + `panel`
+- **Charting library**: 2D → `matplotlib`. 3D → `pyvista` + `panel` for general scenes; **Bloch spheres use matplotlib 3D with `plt.close(fig)`** (see `qbit-gate`)
 
 ## Demo Tools
 
@@ -172,4 +178,4 @@ When building Streamlit-based quantum visualization demos, apply these rules:
 - PyVista: https://docs.pyvista.org/
 - Distilled notes: `~/薦家/布球/` (Bloch sphere derivations, API references)
 - viz-dboard: Streamlit rules and demo tool conventions
-EOF
+- Logic check: 2026-11-22 — removed stray `EOF`; added Fredkin, mutual-exclusion pointer to `qbit-gate`, `horizontal=True` in demo snippet, and Bloch-sphere 3D exception.

@@ -36,7 +36,7 @@ operator = prefix + gate + suffix  # e.g., "IXI" for middle qubit
 ```
 
 ### Entanglement Effect
-When qubits are entangled, individual Bloch vectors shrink or vanish. This is visualized via `plot_bloch_multivector` (individual) and `plot_state_qsphere` (global).
+When qubits are entangled, individual Bloch vectors shrink or vanish — expected, not a bug. Visualize the 3D state with the PyVista + Panel demo `bloch-evolution-viz`; do **not** use matplotlib-backed Qiskit renderers.
 
 ## Logic Gates
 
@@ -66,16 +66,15 @@ When qubits are entangled, individual Bloch vectors shrink or vanish. This is vi
 
 ## Visualization Methods
 
-### Qiskit Built-in
+### Statevector (math only)
 ```python
-from qiskit.visualization import plot_bloch_multivector, plot_state_qsphere, plot_state_city
 from qiskit.quantum_info import Statevector
 
 sv = Statevector(qc)
-plot_bloch_multivector(sv)  # Individual Bloch spheres
-plot_state_qsphere(sv)       # Global phase + entanglement
-plot_state_city(sv)         # Density matrix as city
+probs = sv.probabilities_dict()   # numbers only, no rendering
 ```
+
+> `plot_bloch_multivector`, `plot_state_qsphere`, `plot_state_city` are **matplotlib-backed 3D** renderers. Do not use them in new demos — use `bloch-evolution-viz` (PyVista + Panel).
 
 ### PyVista 3D Rendering (proven implementation)
 Proven in `5布球態演化維問.py`: off-screen `Plotter`, sphere `opacity=0.15`,
@@ -120,13 +119,10 @@ counts = result.get_counts()   # keys are already bitstrings, e.g. "00"
 import streamlit as st
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import Statevector
-from qiskit.visualization import plot_bloch_multivector
-import matplotlib.pyplot as plt
-
 st.set_page_config(page_title="Qubit Lab", layout="wide")
 num_qubits = st.sidebar.radio("Qubits", [1, 2, 3], horizontal=True)
 # Gate selection / mutual exclusion: see qbit-gate (option filtering, not st.info)
-# Circuit execution, Bloch sphere display
+# Circuit execution here; 3D Bloch: hook bloch-evolution-viz (PyVista + Panel)
 ```
 
 ## Code Templates
@@ -135,14 +131,12 @@ num_qubits = st.sidebar.radio("Qubits", [1, 2, 3], horizontal=True)
 ```python
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import Statevector
-from qiskit.visualization import plot_bloch_multivector, plot_state_qsphere
-
 qc = QuantumCircuit(2)
 qc.h(0)
 qc.cx(0, 1)
 sv = Statevector(qc)
-plot_bloch_multivector(sv)  # Both Bloch spheres shrink (entangled)
-plot_state_qsphere(sv)      # Shows entanglement
+print(sv.probabilities_dict())   # {'00': ~0.5, '11': ~0.5} — entangled
+# 3D view: hook bloch-evolution-viz (PyVista + Panel)
 ```
 
 ### 3-Qubit GHZ State
@@ -152,7 +146,8 @@ qc.h(0)
 qc.cx(0, 1)
 qc.cx(0, 2)
 sv = Statevector(qc)
-plot_bloch_multivector(sv)  # All three shrink
+print(sv.probabilities_dict())   # {'000': ~0.5, '111': ~0.5} — GHZ
+# 3D view: hook bloch-evolution-viz (PyVista + Panel)
 ```
 
 ## Streamlit Rules (from viz-dboard)
@@ -183,7 +178,7 @@ When building Streamlit-based quantum visualization demos, apply these rules:
 
 ## Guardrails
 1. Entanglement shrinks Bloch vectors — this is expected, not a bug.
-2. Use `plot_state_qsphere` for entangled states, not individual Bloch spheres.
+2. For entangled states, use the 3D PyVista demo `bloch-evolution-viz`; never `plot_state_qsphere` (matplotlib-backed).
 3. Always normalize state vectors before visualization.
 4. Aer simulator uses `shots` parameter for measurement statistics.
 
@@ -194,4 +189,4 @@ When building Streamlit-based quantum visualization demos, apply these rules:
 - PyVista: https://docs.pyvista.org/
 - Distilled notes: `~/薦家/布球/` (Bloch sphere derivations, API references)
 - viz-dboard: Streamlit rules and demo tool conventions
-- Logic check: 2026-11-22 (rev-skill) — removed stray `EOF`; added Fredkin, mutual-exclusion pointer, `horizontal=True`. Second pass: **removed the incorrect matplotlib-3D exception** (it contradicted `viz-dboard`); 3D is now unconditionally PyVista + Panel, backed by the working `5布球態演化維問.py` implementation. Third pass: 2D narrowed to matplotlib only (no seaborn/PIL). Fourth pass: `qbit-gate-viz` Bloch panel converted from matplotlib 3D to 2D projection — no matplotlib-3D demo remains.
+- Logic check: 2026-11-22 (rev-skill) — removed stray `EOF`; added Fredkin, mutual-exclusion pointer, `horizontal=True`. Second pass: **removed the incorrect matplotlib-3D exception** (it contradicted `viz-dboard`); 3D is now unconditionally PyVista + Panel, backed by the working `5布球態演化維問.py` implementation. Third pass: 2D narrowed to matplotlib only (no seaborn/PIL). Fourth pass: `qbit-gate-viz` Bloch panel converted from matplotlib 3D to 2D projection — no matplotlib-3D demo remains. Fifth pass (doc layer): removed matplotlib-backed Qiskit renderer examples (`plot_bloch_multivector` / `plot_state_qsphere` / `plot_state_city`); both demo code layers now comply (step 9 hook).
